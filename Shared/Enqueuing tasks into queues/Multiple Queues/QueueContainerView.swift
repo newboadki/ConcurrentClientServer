@@ -74,6 +74,6 @@ private extension QueueContainerView {
 
 struct QueueContainerView_Previews: PreviewProvider {
     static var previews: some View {
-        QueueContainerView(presenter: QueuesContainerPresenter(balancer: GCDLoadBalancer()))
+        QueueContainerView(presenter: QueuesContainerPresenter(balancer: GCDLoadBalancer(services: baseServiceConfiguration())))
     }
 }

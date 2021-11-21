@@ -38,7 +38,7 @@ class QueuePresenter: ObservableObject {
     private func subscribeForLoadUpdates() {
         serviceLoadSubscription = serviceLoadPublisher.receive(on: DispatchQueue.main)
             .sink(receiveValue: { newLoadInfo in
-                guard newLoadInfo.currentItemsCount > 0 else {
+                guard newLoadInfo.currentItemsCount >= 0 else {
                     return
                 }
                 
@@ -51,11 +51,12 @@ class QueuePresenter: ObservableObject {
                     for _ in 1...additionalCount {
                         self.enqueue()
                     }
-                } else if additionalCount < 0{
+                } else if additionalCount < 0 {
                     for _ in 1...(additionalCount * -1 ) {
                         self.dequeue()
                     }
                 }
+                                
                 self.lastTaskCount = newLoadInfo.currentItemsCount
             })
     }
