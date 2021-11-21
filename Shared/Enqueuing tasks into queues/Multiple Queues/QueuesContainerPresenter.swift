@@ -24,8 +24,8 @@ class QueuesContainerPresenter: ObservableObject {
     @Published var queueViewModels: [QueueViewModel]
     private let balancer: GCDLoadBalancer
     
-    init() {
-        self.balancer = GCDLoadBalancer()
+    init(balancer: GCDLoadBalancer) {
+        self.balancer = balancer
         self.queueViewModels = []
         self.queueViewModels = self.balancer.serviceList.map { aService in
             var color: Color = .yellow

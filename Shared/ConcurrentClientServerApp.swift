@@ -11,7 +11,7 @@ import SwiftUI
 struct ConcurrentClientServerApp: App {
     var body: some Scene {
         WindowGroup {
-            QueueContainerView()
+            QueueContainerView(presenter: QueuesContainerPresenter(balancer: GCDLoadBalancer()))
         }
     }
 }
