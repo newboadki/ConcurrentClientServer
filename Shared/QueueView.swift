@@ -45,6 +45,7 @@ struct NotInQueueItemsContainer: View {
             ForEach(items) { item in
                 if item.state == type {
                     QueueItemView(id: item.id, color: .yellow, animationsNameSpace: animationsNameSpace)
+                        .opacity(type != .enqueued ? 0 : 1)
                         .transition(.opacity)
                 }
             }
@@ -56,22 +57,22 @@ struct QueueView: View {
     
     let items: [QueueItemViewModel]
     let animationsNameSpace: Namespace.ID
+    let baseColor: Color
     
     var body: some View {
         HStack() {
             HStack {
                 ForEach(items) { item in
                     if item.state == .enqueued {
-                        QueueItemView(id: item.id, color: .yellow, animationsNameSpace: animationsNameSpace)
+                        QueueItemView(id: item.id, color: baseColor.opacity(0.4), animationsNameSpace: animationsNameSpace)
                     }
                 }
             }
             Spacer()
-            
         }
         .padding()
         .frame(width: 800, height: itemWidth + 20)
-        .border(Color.blue, width: 4)
+        .border(baseColor, width: 4)
     }
 }
 
@@ -79,6 +80,7 @@ struct QueueViewComponents: View {
     
     @Namespace private var ns
     @ObservedObject var queuePresenter: QueuePresenter
+    let baseColor: Color
     
     var body: some View {
         VStack {
@@ -87,7 +89,7 @@ struct QueueViewComponents: View {
                 NotInQueueItemsContainer(items: queuePresenter.items, type: .dequeued, animationsNameSpace: ns)
                     .frame(width: itemWidth, height: itemWidth)
                 
-                QueueView(items: queuePresenter.items, animationsNameSpace: ns)
+                QueueView(items: queuePresenter.items, animationsNameSpace: ns, baseColor: baseColor)
                 
                 NotInQueueItemsContainer(items: queuePresenter.items, type: .none, animationsNameSpace: ns)
             }

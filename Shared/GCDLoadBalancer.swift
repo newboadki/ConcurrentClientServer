@@ -55,7 +55,7 @@ class GCDLoadBalancer {
                 print(error)
             }
         }
-    }
+    }    
     
     func firstService(forRequestType type: ServiceRequest.RequestType) -> GCDService {
         return services[type]!.first!
@@ -100,7 +100,7 @@ class GCDService {
     @Published var loadInfo: LoadInfo
     
     let id: String
-    private let supportedRequestTypes: [ServiceRequest.RequestType]
+    let supportedRequestTypes: [ServiceRequest.RequestType]
     private let tasksSerialQueue: DispatchQueue
     private let delay: UInt32
         

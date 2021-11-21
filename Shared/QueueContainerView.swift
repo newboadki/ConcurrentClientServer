@@ -16,7 +16,7 @@ struct QueueContainerView: View {
             
             // Queues
             ForEach(presenter.queueViewModels) { queueViewModel in
-                QueueViewComponents(queuePresenter: queueViewModel.presenter)
+                QueueViewComponents(queuePresenter: queueViewModel.presenter, baseColor: queueViewModel.baseColor)
             }
 
             // Buttons

@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 struct QueueViewModel: Identifiable {
     
@@ -15,6 +16,7 @@ struct QueueViewModel: Identifiable {
     }
     
     let presenter: QueuePresenter
+    let baseColor: Color
 }
 
 class QueuesContainerPresenter: ObservableObject {
@@ -26,7 +28,18 @@ class QueuesContainerPresenter: ObservableObject {
         self.balancer = GCDLoadBalancer()
         self.queueViewModels = []
         self.queueViewModels = self.balancer.serviceList.map { aService in
-            QueueViewModel(presenter: QueuePresenter(serviceId: aService.id, serviceLoadPublisher: AnyPublisher(aService.$loadInfo)))
+            var color: Color = .yellow
+            if let type = aService.supportedRequestTypes.first {
+                switch type {
+                case .A:
+                    color = .red
+                case .B:
+                    color = .blue
+                case .C:
+                    color = .orange
+                }
+            }
+            return QueueViewModel(presenter: QueuePresenter(serviceId: aService.id, serviceLoadPublisher: AnyPublisher(aService.$loadInfo)), baseColor: color)
         }
     }
     

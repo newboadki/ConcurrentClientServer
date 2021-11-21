@@ -32,7 +32,7 @@ class QueuePresenter: ObservableObject {
                       QueueItemViewModel(id: serviceId + "9", state: .none),
                       QueueItemViewModel(id: serviceId + "10", state: .none),
                       QueueItemViewModel(id: serviceId + "11", state: .none)]
-        self.subscribeForLoadUpdates() 
+        self.subscribeForLoadUpdates()
     }
     
     private func subscribeForLoadUpdates() {
@@ -44,6 +44,10 @@ class QueuePresenter: ObservableObject {
                 
                 let additionalCount = newLoadInfo.currentItemsCount - self.lastTaskCount
                 if additionalCount > 0 {
+                    for _ in 1...additionalCount {
+                        self.items.append(QueueItemViewModel(id: self.serviceId + "\(self.items.count)", state: .none))
+                    }
+
                     for _ in 1...additionalCount {
                         self.enqueue()
                     }
@@ -57,6 +61,7 @@ class QueuePresenter: ObservableObject {
     }
     
     private func enqueue() {
+        // Create inactive views to create the equeuing (.none -> .enqueued) animation effect
         let index = items.firstIndex { item in
             item.state == .none
         }
