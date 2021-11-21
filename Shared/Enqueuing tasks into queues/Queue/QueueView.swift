@@ -10,16 +10,6 @@ import Combine
 
 let itemWidth: CGFloat = 30
 
-struct QueueItemViewModel: Identifiable, Equatable {
-    let id: String
-    var state: QueueItemState
-    var opacity: CGFloat = 1
-}
-
-enum QueueItemState {
-    case none, enqueued, dequeued
-}
-
 struct QueueItemView: View {
     
     let id: String
@@ -53,6 +43,7 @@ struct NotInQueueItemsContainer: View {
     }
 }
 
+/// This represents the queue itself
 struct QueueView: View {
     
     let items: [QueueItemViewModel]
@@ -76,6 +67,10 @@ struct QueueView: View {
     }
 }
 
+/// In order to animate views in an out of the queue we need three sets of views:
+/// - Dequeued Items
+/// - Enqueued items (the queue itself)
+/// - Items that have never been enqueued
 struct QueueViewComponents: View {
     
     @Namespace private var ns
@@ -101,9 +96,10 @@ struct QueueViewComponents: View {
     }
 }
 
-//struct Queue_v2_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Queue_v2()
-//            .previewInterfaceOrientation(.landscapeLeft)
-//    }
-//}
+struct QueueView_Previews: PreviewProvider {
+    @Namespace static var ns
+    static var previews: some View {
+        QueueView(items: [], animationsNameSpace: ns, baseColor: .yellow)
+            .previewInterfaceOrientation(.landscapeLeft)
+    }
+}
