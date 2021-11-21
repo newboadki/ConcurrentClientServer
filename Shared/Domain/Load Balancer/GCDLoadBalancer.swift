@@ -7,14 +7,18 @@
 
 import Foundation
 
-class GCDLoadBalancer {
+class GCDLoadBalancer: LoadBalancer {
+    
+    // MARK: Public properties & types
     
     enum RequestError: Error {
         case unsupported
         case serviceUnavailable
     }
     
-    var serviceList: [GCDService]
+    let serviceList: [Service]
+    
+    // MARK: Private properties
     
     /// Determining the current load must be a synchronous operation since two concurrent calls will not know about
     /// eachother and might decide to overload the same service, when the best solution could have been to distribute the requests.
@@ -22,6 +26,8 @@ class GCDLoadBalancer {
     private(set) var services: [ServiceRequest.RequestType : [GCDService]]
     private var enqueuedNumberOfRequests: Int = 0
         
+    // MARK: Initializers
+    
     init() {
         let A1 = GCDService(id: "A1", supportedRequestTypes: [.A], delay: 2)
         let A2 = GCDService(id: "A2", supportedRequestTypes: [.A], delay: 5)
@@ -35,6 +41,8 @@ class GCDLoadBalancer {
         serviceList = [A1, A2, B, C]
     }
     
+    // MARK: Public API
+    
     func handle(request: ServiceRequest) {
         requestsSerialQueue.async { [unowned self] in
             do {
@@ -47,9 +55,7 @@ class GCDLoadBalancer {
         }
     }    
     
-    func firstService(forRequestType type: ServiceRequest.RequestType) -> GCDService {
-        return services[type]!.first!
-    }
+    // MARK: Helpers
     
     private func service(for request: ServiceRequest) throws ->  GCDService {
                 

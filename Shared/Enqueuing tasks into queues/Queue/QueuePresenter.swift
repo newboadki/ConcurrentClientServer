@@ -13,11 +13,11 @@ class QueuePresenter: ObservableObject {
     @Published var items: [QueueItemViewModel]
     
     let serviceId: String
-    private let serviceLoadPublisher: AnyPublisher<GCDService.LoadInfo, Never>
+    private let serviceLoadPublisher: AnyPublisher<ServiceLoadInfo, Never>
     private var serviceLoadSubscription: AnyCancellable?
     private var lastTaskCount: Int = 0
     
-    init(serviceId: String, serviceLoadPublisher: AnyPublisher<GCDService.LoadInfo, Never>) {
+    init(serviceId: String, serviceLoadPublisher: AnyPublisher<ServiceLoadInfo, Never>) {
         self.serviceId = serviceId
         self.serviceLoadPublisher = serviceLoadPublisher
         self.items = [QueueItemViewModel(id: serviceId + "0", state: .none),

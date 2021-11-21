@@ -7,4 +7,7 @@
 
 import Foundation
 
-protocol LoadBalancer {}
+protocol LoadBalancer {    
+    var serviceList: [Service] { get }
+    func handle(request: ServiceRequest)
+}

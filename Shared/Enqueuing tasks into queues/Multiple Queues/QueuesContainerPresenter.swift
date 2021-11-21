@@ -13,9 +13,9 @@ import SwiftUI
 class QueuesContainerPresenter: ObservableObject {
         
     @Published var queueViewModels: [QueueViewModel]
-    private let balancer: GCDLoadBalancer
+    private let balancer: LoadBalancer
     
-    init(balancer: GCDLoadBalancer) {
+    init(balancer: LoadBalancer) {
         self.balancer = balancer
         self.queueViewModels = []
         self.queueViewModels = self.balancer.serviceList.map { aService in
@@ -30,7 +30,7 @@ class QueuesContainerPresenter: ObservableObject {
                     color = .orange
                 }
             }
-            return QueueViewModel(presenter: QueuePresenter(serviceId: aService.id, serviceLoadPublisher: AnyPublisher(aService.$loadInfo)), baseColor: color)
+            return QueueViewModel(presenter: QueuePresenter(serviceId: aService.id, serviceLoadPublisher: AnyPublisher(aService.loadInfoPublisher)), baseColor: color)
         }
     }
     

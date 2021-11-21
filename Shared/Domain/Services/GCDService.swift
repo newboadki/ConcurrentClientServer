@@ -7,17 +7,20 @@
 
 import Foundation
 
-class GCDService {
+class GCDService: Service {
     
-    struct LoadInfo {
-        let serviceId: String
-        let currentItemsCount: Int
-    }
-    
-    @Published var loadInfo: LoadInfo
+    // MARK: Public properties
     
     let id: String
     let supportedRequestTypes: [ServiceRequest.RequestType]
+    
+    var loadInfoPublisher: Published<ServiceLoadInfo>.Publisher {
+        $loadInfo
+    }
+    
+    // MARK: Private properties
+    
+    @Published private var loadInfo: ServiceLoadInfo
     private let tasksSerialQueue: DispatchQueue
     private let delay: UInt32
         
@@ -29,14 +32,18 @@ class GCDService {
     /// From inside a given member queue, you should only accecss properties prefixed with '_' to avoid dead locks.
     private var _workLoad: Int = 0
     
+    // MARK: Initializers
+    
     init(id: String, supportedRequestTypes: [ServiceRequest.RequestType], delay: UInt32) {
         self.id = id
         self.tasksSerialQueue = DispatchQueue(label: "serial.service.\(id).tasks")
         self.workLoadSerialQueue = DispatchQueue(label: "serial.service.\(id).workload")
         self.supportedRequestTypes = supportedRequestTypes
         self.delay = delay
-        self.loadInfo = LoadInfo(serviceId: id, currentItemsCount: 0)
+        self.loadInfo = ServiceLoadInfo(serviceId: id, currentItemsCount: 0)
     }
+    
+    // MARK: Public API
     
     func process(request: ServiceRequest) {
         enqueue {
@@ -44,15 +51,15 @@ class GCDService {
         }
     }
     
-    // MARK: Public API
-    
     func workLoad() -> Int {
         return workLoadSerialQueue.sync {
             return _workLoad
         }
     }
     
-    func enqueue(_ block: @escaping () -> Void) {
+    // MARK: Enqueuing work
+    
+    private func enqueue(_ block: @escaping () -> Void) {
         // NOTE: increment and decrement can witherbe async or sync to be dispatched sync because serial execution of inc/dec operations are guaranteed.
         
         // Alternative 1
@@ -79,14 +86,14 @@ class GCDService {
             // Alternative 3
             // Use an NSLock
         }
-                
     }
     
     // MARK: Serialization of workLoad access
+    
     private func incrementWorkLoad() {
         workLoadSerialQueue.async {
             self._workLoad += 1
-            self.loadInfo = LoadInfo(serviceId: self.id, currentItemsCount: self._workLoad)
+            self.loadInfo = ServiceLoadInfo(serviceId: self.id, currentItemsCount: self._workLoad)
             print("SERVICE-\(self.id): LOAD: \(self._workLoad)")
         }
     }
@@ -94,7 +101,7 @@ class GCDService {
     private func decrementWorkLoad() {
         workLoadSerialQueue.async {
             self._workLoad -= 1
-            self.loadInfo = LoadInfo(serviceId: self.id, currentItemsCount: self._workLoad)
+            self.loadInfo = ServiceLoadInfo(serviceId: self.id, currentItemsCount: self._workLoad)
             print("SERVICE-\(self.id): LOAD: \(self._workLoad)")
         }
     }
