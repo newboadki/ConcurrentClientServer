@@ -20,19 +20,19 @@ class QueuePresenter: ObservableObject {
     init(serviceId: String, serviceLoadPublisher: AnyPublisher<GCDService.LoadInfo, Never>) {
         self.serviceId = serviceId
         self.serviceLoadPublisher = serviceLoadPublisher
-        self.items = [QueueItemViewModel(id: "0", state: .none),
-                      QueueItemViewModel(id: "1", state: .none),
-                      QueueItemViewModel(id: "2", state: .none),
-                      QueueItemViewModel(id: "3", state: .none),
-                      QueueItemViewModel(id: "4", state: .none),
-                      QueueItemViewModel(id: "5", state: .none),
-                      QueueItemViewModel(id: "6", state: .none),
-                      QueueItemViewModel(id: "7", state: .none),
-                      QueueItemViewModel(id: "8", state: .none),
-                      QueueItemViewModel(id: "9", state: .none),
-                      QueueItemViewModel(id: "10", state: .none),
-                      QueueItemViewModel(id: "11", state: .none)]
-        self.subscribeForLoadUpdates()
+        self.items = [QueueItemViewModel(id: serviceId + "0", state: .none),
+                      QueueItemViewModel(id: serviceId + "1", state: .none),
+                      QueueItemViewModel(id: serviceId + "2", state: .none),
+                      QueueItemViewModel(id: serviceId + "3", state: .none),
+                      QueueItemViewModel(id: serviceId + "4", state: .none),
+                      QueueItemViewModel(id: serviceId + "5", state: .none),
+                      QueueItemViewModel(id: serviceId + "6", state: .none),
+                      QueueItemViewModel(id: serviceId + "7", state: .none),
+                      QueueItemViewModel(id: serviceId + "8", state: .none),
+                      QueueItemViewModel(id: serviceId + "9", state: .none),
+                      QueueItemViewModel(id: serviceId + "10", state: .none),
+                      QueueItemViewModel(id: serviceId + "11", state: .none)]
+        self.subscribeForLoadUpdates() 
     }
     
     private func subscribeForLoadUpdates() {

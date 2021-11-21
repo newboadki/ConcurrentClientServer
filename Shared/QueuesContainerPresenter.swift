@@ -20,26 +20,13 @@ struct QueueViewModel: Identifiable {
 class QueuesContainerPresenter: ObservableObject {
         
     @Published var queueViewModels: [QueueViewModel]
-    let service: GCDService
     private let balancer: GCDLoadBalancer
     
     init() {
         self.balancer = GCDLoadBalancer()
-        self.service = balancer.firstService(forRequestType: .A)
-        self.queueViewModels = [QueueViewModel(presenter: QueuePresenter(serviceId: service.id,
-                                                                         serviceLoadPublisher: AnyPublisher(service.$loadInfo)))]
-    }
-    
-    func start() {
-        pushToService()
-    }
-    
-    func pushToService() {
-        DispatchQueue.global(qos: .default).async {
-            for _ in 1...5 {
-                sleep(1)
-                self.service.process(request: ServiceRequest(type: .A))
-            }
+        self.queueViewModels = []
+        self.queueViewModels = self.balancer.serviceList.map { aService in
+            QueueViewModel(presenter: QueuePresenter(serviceId: aService.id, serviceLoadPublisher: AnyPublisher(aService.$loadInfo)))
         }
     }
     
