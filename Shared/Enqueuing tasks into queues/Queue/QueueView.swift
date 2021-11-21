@@ -29,12 +29,13 @@ struct NotInQueueItemsContainer: View {
     var items: [QueueItemViewModel]
     let type: QueueItemState
     let animationsNameSpace: Namespace.ID
+    let baseColor: Color
     
     var body: some View {
         ZStack {
             ForEach(items) { item in
                 if item.state == type {
-                    QueueItemView(id: item.id, color: .yellow, animationsNameSpace: animationsNameSpace)
+                    QueueItemView(id: item.id, color: baseColor, animationsNameSpace: animationsNameSpace)
                         .opacity(type != .enqueued ? 0 : 1)
                         .transition(.opacity)
                 }
@@ -81,12 +82,15 @@ struct QueueViewComponents: View {
         VStack {
             // Queue
             HStack() {
-                NotInQueueItemsContainer(items: queuePresenter.items, type: .dequeued, animationsNameSpace: ns)
+                NotInQueueItemsContainer(items: queuePresenter.items, type: .dequeued, animationsNameSpace: ns, baseColor: baseColor)
                     .frame(width: itemWidth, height: itemWidth)
                 
                 QueueView(items: queuePresenter.items, animationsNameSpace: ns, baseColor: baseColor)
                 
-                NotInQueueItemsContainer(items: queuePresenter.items, type: .none, animationsNameSpace: ns)
+                // This exists to allow the animation from none to enqueued to be easier to percibe.
+                Rectangle().fill(Color.clear).frame(width: 60, height: 1)
+                
+                NotInQueueItemsContainer(items: queuePresenter.items, type: .none, animationsNameSpace: ns, baseColor: baseColor)
             }
             .animation(.easeIn(duration: 0.6), value: queuePresenter.items)
             .padding()
