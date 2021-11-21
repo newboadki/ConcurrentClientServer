@@ -89,10 +89,9 @@ struct QueueViewComponents: View {
                 NotInQueueItemsContainer(items: queuePresenter.items, type: .none, animationsNameSpace: ns)
             }
             .animation(.easeIn(duration: 0.6), value: queuePresenter.items)
-            .padding(50)
+            .padding()
             .frame(width: 1000)
-        }
-        .padding(20)
+        }        
     }
 }
 
