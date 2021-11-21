@@ -9,15 +9,6 @@ import Foundation
 import Combine
 import SwiftUI
 
-struct QueueViewModel: Identifiable {
-    
-    var id: String {
-        presenter.serviceId
-    }
-    
-    let presenter: QueuePresenter
-    let baseColor: Color
-}
 
 class QueuesContainerPresenter: ObservableObject {
         
