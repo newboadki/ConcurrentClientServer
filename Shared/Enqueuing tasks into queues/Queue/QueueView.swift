@@ -1,5 +1,5 @@
 //
-//  Queue_v2.swift
+//  QueueItemView.swift
 //  ConcurrentClientServer
 //
 //  Created by Borja Arias Drake on 20.11.2021..
@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-let itemWidth: CGFloat = 30
+let itemWidth: CGFloat = 15
 
 struct QueueItemView: View {
     

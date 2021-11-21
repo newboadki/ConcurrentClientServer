@@ -36,10 +36,11 @@ private extension QueueContainerView {
             presenter.startA()
         } label: {
             HStack {
-                Image(systemName: "cross")
-                Text("REQUEST - A")
+                Text("REQUEST TYPE")
+                Image(systemName: "square")
             }
             .font(.system(size: 25))
+            .foregroundColor(Color.CyberRetro.pink())
         }
     }
     
@@ -48,10 +49,11 @@ private extension QueueContainerView {
             presenter.startB()
         } label: {
             HStack {
-                Image(systemName: "cross")
-                Text("REQUEST - B")
+                Text("REQUEST TYPE")
+                Image(systemName: "triangle")
             }
             .font(.system(size: 25))
+            .foregroundColor(Color.CyberRetro.blue())
         }
     }
     
@@ -60,10 +62,11 @@ private extension QueueContainerView {
             presenter.startC()
         } label: {
             HStack {
-                Image(systemName: "cross")
-                Text("REQUEST - C")
+                Text("REQUEST TYPE")
+                Image(systemName: "circle")
             }
             .font(.system(size: 25))
+            .foregroundColor(Color.CyberRetro.green())
         }
     }
 

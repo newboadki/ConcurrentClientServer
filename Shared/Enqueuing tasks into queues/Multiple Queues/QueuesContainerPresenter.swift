@@ -1,5 +1,5 @@
 //
-//  Main.swift
+//  QueuesContainerPresenter.swift
 //  ConcurrentClientServer
 //
 //  Created by Borja Arias Drake on 18.11.2021..
@@ -23,11 +23,11 @@ class QueuesContainerPresenter: ObservableObject {
             if let type = aService.supportedRequestTypes.first {
                 switch type {
                 case .A:
-                    color = .red
+                    color = Color.CyberRetro.pink()
                 case .B:
-                    color = .blue
+                    color = Color.CyberRetro.blue()
                 case .C:
-                    color = .orange
+                    color = Color.CyberRetro.green()
                 }
             }
             return QueueViewModel(presenter: QueuePresenter(serviceId: aService.id, serviceLoadPublisher: AnyPublisher(aService.loadInfoPublisher)), baseColor: color)
