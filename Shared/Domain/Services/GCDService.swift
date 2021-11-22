@@ -32,6 +32,9 @@ class GCDService: Service {
     /// From inside a given member queue, you should only accecss properties prefixed with '_' to avoid dead locks.
     private var _workLoad: Int = 0
     
+    // To allow cancellation of tasks.
+    private var workItems: [DispatchWorkItem]
+    
     // MARK: Initializers
     
     init(id: String, supportedRequestTypes: [ServiceRequest.RequestType], delay: UInt32) {
@@ -41,14 +44,13 @@ class GCDService: Service {
         self.supportedRequestTypes = supportedRequestTypes
         self.delay = delay
         self.loadInfo = ServiceLoadInfo(serviceId: id, currentItemsCount: 0)
+        self.workItems = []
     }
     
     // MARK: Public API
-    
+        
     func process(request: ServiceRequest) {
-        enqueue {
-            sleep(self.delay)
-        }
+        processDispatchWorkItem(request: request)
     }
     
     func workLoad() -> Int {
@@ -56,9 +58,46 @@ class GCDService: Service {
             return _workLoad
         }
     }
+
+    func cancel() {
+        for workItem in workItems { workItem.cancel() }
+        workItems.removeAll()
+        resetWorkLoad()
+    }
     
     // MARK: Enqueuing work
     
+    func processWithBlock(request: ServiceRequest) {
+        enqueue {
+            sleep(self.delay)
+        }
+    }
+    
+    private func processDispatchWorkItem(request: ServiceRequest) {
+        var workItem: DispatchWorkItem?
+        workItem = DispatchWorkItem {
+            sleep(self.delay)
+            for i in 1...10_000 {
+                if workItem?.isCancelled ?? false {
+                    // We don't cancel here as it does not seem to be called for all enqueued tasks
+                    // However, tasks do stop executing.
+                    return
+                }
+                print("\(self.id)-Working...\(i)")
+            }
+            sleep(self.delay)
+            self.decrementWorkLoad()
+        }
+        
+        guard let wi = workItem else {
+            return
+        }
+        
+        self.incrementWorkLoad()
+        self.workItems.append(wi)
+        self.tasksSerialQueue.async(execute: wi)
+    }
+
     private func enqueue(_ block: @escaping () -> Void) {
         // NOTE: increment and decrement can witherbe async or sync to be dispatched sync because serial execution of inc/dec operations are guaranteed.
         
@@ -71,7 +110,7 @@ class GCDService: Service {
 
         // Alternative 3
         // Use an NSLock
-        
+       
         self.tasksSerialQueue.async {
             //print("SERVICE-\(self.id): about to process request. LOAD: \(self._workLoad)")
             block()
@@ -100,7 +139,7 @@ class GCDService: Service {
 
     private func decrementWorkLoad() {
         workLoadSerialQueue.async {
-            self._workLoad -= 1
+            self._workLoad = max (self._workLoad - 1, 0)
             self.loadInfo = ServiceLoadInfo(serviceId: self.id, currentItemsCount: self._workLoad)
             print("SERVICE-\(self.id): LOAD: \(self._workLoad)")
         }

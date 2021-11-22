@@ -24,6 +24,7 @@ struct QueueContainerView: View {
                 buttonToCreateReuqestsOfTypeA()
                 buttonToCreateReuqestsOfTypeB()
                 buttonToCreateReuqestsOfTypeC()
+                buttonToCancel()
             }
         }
     }
@@ -70,6 +71,17 @@ private extension QueueContainerView {
         }
     }
 
+    func buttonToCancel() -> some View {
+        Button {
+            presenter.cancel()
+        } label: {
+            HStack {
+                Text("Cancel")
+            }
+            .font(.system(size: 25))
+            .foregroundColor(.blue)
+        }
+    }
 }
 
 struct QueueContainerView_Previews: PreviewProvider {

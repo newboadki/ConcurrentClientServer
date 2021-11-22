@@ -13,6 +13,7 @@ protocol Service {
     var loadInfoPublisher: Published<ServiceLoadInfo>.Publisher { get }
     func process(request: ServiceRequest)
     func workLoad() -> Int
+    func cancel()
 }
 
 struct ServiceLoadInfo {

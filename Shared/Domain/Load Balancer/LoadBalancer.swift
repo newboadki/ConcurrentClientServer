@@ -10,4 +10,5 @@ import Foundation
 protocol LoadBalancer {    
     var serviceList: [Service] { get }
     func handle(request: ServiceRequest)
+    func cancel()
 }

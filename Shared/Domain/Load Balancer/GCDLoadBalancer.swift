@@ -42,12 +42,17 @@ class GCDLoadBalancer: LoadBalancer {
             do {
                 let service = try service(for: request)
                 service.process(request: request)
-                
             } catch {
                 print(error)
             }
         }
-    }    
+    }
+    
+    func cancel() {
+        for service in serviceList {
+            service.cancel()
+        }
+    }
     
     // MARK: Helpers
     

@@ -57,4 +57,8 @@ class QueuesContainerPresenter: ObservableObject {
             }
         }
     }
+    
+    func cancel() {
+        balancer.cancel()
+    }
 }
