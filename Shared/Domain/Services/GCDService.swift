@@ -79,7 +79,7 @@ class GCDService: Service {
             sleep(self.delay)
             for i in 1...10_000 {
                 if workItem?.isCancelled ?? false {
-                    // We don't cancel here as it does not seem to be called for all enqueued tasks
+                    // It does not seem to enter here for all enqueued tasks
                     // However, tasks do stop executing.
                     return
                 }
@@ -148,6 +148,7 @@ class GCDService: Service {
     private func resetWorkLoad() {
         workLoadSerialQueue.async {
             self._workLoad = 0
+            self.loadInfo = ServiceLoadInfo(serviceId: self.id, currentItemsCount: self._workLoad)
         }
     }
 }
