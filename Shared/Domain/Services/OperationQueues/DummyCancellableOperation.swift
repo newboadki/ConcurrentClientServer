@@ -62,6 +62,7 @@ class DummyCancellableOperation: Operation {
             guard !self.isCancelled else {
                 self._isExecuting = false
                 self._isFinished = true
+                print("CANCELLED OPERATION.")
                 return
             }
             print("\(id)-Working...\(i)")

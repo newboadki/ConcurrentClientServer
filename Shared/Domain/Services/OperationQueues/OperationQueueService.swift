@@ -22,6 +22,7 @@ class OperationQueueService: Service {
     @Published private var loadInfo: ServiceLoadInfo
     private let delay: UInt32
     private let operationQueue: OperationQueue
+    private let workLoadOperationQueue: OperationQueue
     private var kvoToken: NSKeyValueObservation?
         
     // MARK: Initializers
@@ -32,6 +33,8 @@ class OperationQueueService: Service {
         self.delay = delay
         self.operationQueue = OperationQueue()
         self.operationQueue.maxConcurrentOperationCount = 1
+        self.workLoadOperationQueue = OperationQueue()
+        self.workLoadOperationQueue.maxConcurrentOperationCount = 1
         self.loadInfo = ServiceLoadInfo(serviceId: id, currentItemsCount: 0)
         self.observeOperationCount()
     }
@@ -43,8 +46,11 @@ class OperationQueueService: Service {
     // MARK: Service protocol conformance
     
     func process(request: ServiceRequest) {
-        operationQueue.addOperation(DummyCancellableOperation(id: self.id, delay: self.delay))
-        loadInfo = ServiceLoadInfo(serviceId: id, currentItemsCount: Int(self.workLoad()))
+        let op = DummyCancellableOperation(id: self.id, delay: self.delay)
+        op.completionBlock = {
+            print("OP FINISHED")
+        }
+        operationQueue.addOperation(op)
     }
     
     func workLoad() -> Int {
@@ -54,7 +60,6 @@ class OperationQueueService: Service {
     
     func cancel() {
         operationQueue.cancelAllOperations()
-        loadInfo = ServiceLoadInfo(serviceId: id, currentItemsCount: self.workLoad())
     }
     
     // MARK: KVO
@@ -63,7 +68,14 @@ class OperationQueueService: Service {
         kvoToken = operationQueue.observe(\.operationCount, options: .new) { (queue, change) in
             guard let count = change.newValue else { return }
             print("WORKLOAD \(count)")
-            self.loadInfo = ServiceLoadInfo(serviceId: self.id, currentItemsCount: self.workLoad())
+            
+            // We should synchronise access to this property.
+            // Currently the queue is serial, really minimizing the changes of race conditions over this var.
+            // However, in concurrent queues, I assume access to operationCount is already thread-safe,
+            // But KVO schedule updates this thread that sends the KVO notification.
+            self.workLoadOperationQueue.addOperation {
+                self.loadInfo = ServiceLoadInfo(serviceId: self.id, currentItemsCount: self.workLoad())
+            }
         }
     }
 }
