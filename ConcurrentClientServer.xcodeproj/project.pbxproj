@@ -11,8 +11,8 @@
 		007E92DF2744BBC3008041E3 /* ConcurrentClientServerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007E92CE2744BBC1008041E3 /* ConcurrentClientServerApp.swift */; };
 		007E92E22744BBC3008041E3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 007E92D02744BBC3008041E3 /* Assets.xcassets */; };
 		007E92E32744BBC3008041E3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 007E92D02744BBC3008041E3 /* Assets.xcassets */; };
-		007E92ED2744BFB0008041E3 /* GCDLoadBalancer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007E92EC2744BFB0008041E3 /* GCDLoadBalancer.swift */; };
-		007E92EE2744BFB0008041E3 /* GCDLoadBalancer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007E92EC2744BFB0008041E3 /* GCDLoadBalancer.swift */; };
+		007E92ED2744BFB0008041E3 /* CurrentMinLoadBalancer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007E92EC2744BFB0008041E3 /* CurrentMinLoadBalancer.swift */; };
+		007E92EE2744BFB0008041E3 /* CurrentMinLoadBalancer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007E92EC2744BFB0008041E3 /* CurrentMinLoadBalancer.swift */; };
 		007E92F02744BFFD008041E3 /* LoadBalancer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007E92EF2744BFFD008041E3 /* LoadBalancer.swift */; };
 		007E92F12744BFFD008041E3 /* LoadBalancer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007E92EF2744BFFD008041E3 /* LoadBalancer.swift */; };
 		008BC48827461264002D4439 /* QueuesContainerPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BC48727461264002D4439 /* QueuesContainerPresenter.swift */; };
@@ -43,7 +43,7 @@
 		007E92D52744BBC3008041E3 /* ConcurrentClientServer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ConcurrentClientServer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		007E92DB2744BBC3008041E3 /* ConcurrentClientServer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ConcurrentClientServer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		007E92DD2744BBC3008041E3 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
-		007E92EC2744BFB0008041E3 /* GCDLoadBalancer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCDLoadBalancer.swift; sourceTree = "<group>"; };
+		007E92EC2744BFB0008041E3 /* CurrentMinLoadBalancer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentMinLoadBalancer.swift; sourceTree = "<group>"; };
 		007E92EF2744BFFD008041E3 /* LoadBalancer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadBalancer.swift; sourceTree = "<group>"; };
 		008BC48727461264002D4439 /* QueuesContainerPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueuesContainerPresenter.swift; sourceTree = "<group>"; };
 		00A2011A274991DC0004DF82 /* QueuePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueuePresenter.swift; sourceTree = "<group>"; };
@@ -165,7 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				007E92EF2744BFFD008041E3 /* LoadBalancer.swift */,
-				007E92EC2744BFB0008041E3 /* GCDLoadBalancer.swift */,
+				007E92EC2744BFB0008041E3 /* CurrentMinLoadBalancer.swift */,
 			);
 			path = "Load Balancer";
 			sourceTree = "<group>";
@@ -288,7 +288,7 @@
 				00AB61AF274A33BC0046B7D3 /* ServiceRequest.swift in Sources */,
 				007E92DE2744BBC3008041E3 /* ConcurrentClientServerApp.swift in Sources */,
 				00AB61AC274A33940046B7D3 /* GCDService.swift in Sources */,
-				007E92ED2744BFB0008041E3 /* GCDLoadBalancer.swift in Sources */,
+				007E92ED2744BFB0008041E3 /* CurrentMinLoadBalancer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,7 +308,7 @@
 				00AB61B0274A33BC0046B7D3 /* ServiceRequest.swift in Sources */,
 				007E92DF2744BBC3008041E3 /* ConcurrentClientServerApp.swift in Sources */,
 				00AB61AD274A33940046B7D3 /* GCDService.swift in Sources */,
-				007E92EE2744BFB0008041E3 /* GCDLoadBalancer.swift in Sources */,
+				007E92EE2744BFB0008041E3 /* CurrentMinLoadBalancer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

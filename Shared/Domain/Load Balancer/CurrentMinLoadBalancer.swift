@@ -7,7 +7,7 @@
 
 import Foundation
 
-class GCDLoadBalancer: LoadBalancer {
+class CurrentMinLoadBalancer: LoadBalancer {
     
     // MARK: Public properties & types
     
@@ -23,12 +23,12 @@ class GCDLoadBalancer: LoadBalancer {
     /// Determining the current load must be a synchronous operation since two concurrent calls will not know about
     /// eachother and might decide to overload the same service, when the best solution could have been to distribute the requests.
     private let requestsSerialQueue = DispatchQueue(label: "serial.determine.service.handler")
-    private(set) var services: [ServiceRequest.RequestType : [GCDService]]
+    private(set) var services: [ServiceRequest.RequestType : [Service]]
     private var enqueuedNumberOfRequests: Int = 0
         
     // MARK: Initializers
     
-    init(services: [ServiceRequest.RequestType : [GCDService]]) {        
+    init(services: [ServiceRequest.RequestType : [Service]]) {
         self.services = services
         self.serviceList = services.flatMap({ (key, value) in
             return value
@@ -56,7 +56,7 @@ class GCDLoadBalancer: LoadBalancer {
     
     // MARK: Helpers
     
-    private func service(for request: ServiceRequest) throws ->  GCDService {
+    private func service(for request: ServiceRequest) throws ->  Service {
                 
         guard let supportingServices = services[request.type] else {
             throw RequestError.unsupported
@@ -67,7 +67,7 @@ class GCDLoadBalancer: LoadBalancer {
         }
         
         var minWorkLoad: Int = Int.max
-        var service: GCDService?
+        var service: Service?
         for s in supportingServices {
             let currentWorkLoad = s.workLoad()
             if currentWorkLoad < minWorkLoad {
