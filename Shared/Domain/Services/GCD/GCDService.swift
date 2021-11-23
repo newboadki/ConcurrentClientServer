@@ -73,6 +73,8 @@ class GCDService: Service {
         }
     }
     
+    
+    /// Supports cancellation
     private func processDispatchWorkItem(request: ServiceRequest) {
         var workItem: DispatchWorkItem?
         workItem = DispatchWorkItem {
@@ -97,7 +99,8 @@ class GCDService: Service {
         self.workItems.append(wi)
         self.tasksSerialQueue.async(execute: wi)
     }
-
+    
+    /// Does not support cancellation
     private func enqueue(_ block: @escaping () -> Void) {
         // NOTE: increment and decrement can witherbe async or sync to be dispatched sync because serial execution of inc/dec operations are guaranteed.
         

@@ -21,6 +21,10 @@
 		00A2011C274991DC0004DF82 /* QueuePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A2011A274991DC0004DF82 /* QueuePresenter.swift */; };
 		00A2011E2749986A0004DF82 /* QueueContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A2011D2749986A0004DF82 /* QueueContainerView.swift */; };
 		00A2011F2749986A0004DF82 /* QueueContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A2011D2749986A0004DF82 /* QueueContainerView.swift */; };
+		00A42A72274CA1C4009EB9F3 /* OperationQueueService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A42A71274CA1C3009EB9F3 /* OperationQueueService.swift */; };
+		00A42A73274CA1C4009EB9F3 /* OperationQueueService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A42A71274CA1C3009EB9F3 /* OperationQueueService.swift */; };
+		00A42A76274CA5B7009EB9F3 /* DummyCancellableOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A42A75274CA5B7009EB9F3 /* DummyCancellableOperation.swift */; };
+		00A42A77274CA5B7009EB9F3 /* DummyCancellableOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A42A75274CA5B7009EB9F3 /* DummyCancellableOperation.swift */; };
 		00AB61AC274A33940046B7D3 /* GCDService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00AB61AB274A33940046B7D3 /* GCDService.swift */; };
 		00AB61AD274A33940046B7D3 /* GCDService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00AB61AB274A33940046B7D3 /* GCDService.swift */; };
 		00AB61AF274A33BC0046B7D3 /* ServiceRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00AB61AE274A33BC0046B7D3 /* ServiceRequest.swift */; };
@@ -48,6 +52,8 @@
 		008BC48727461264002D4439 /* QueuesContainerPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueuesContainerPresenter.swift; sourceTree = "<group>"; };
 		00A2011A274991DC0004DF82 /* QueuePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueuePresenter.swift; sourceTree = "<group>"; };
 		00A2011D2749986A0004DF82 /* QueueContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueContainerView.swift; sourceTree = "<group>"; };
+		00A42A71274CA1C3009EB9F3 /* OperationQueueService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationQueueService.swift; sourceTree = "<group>"; };
+		00A42A75274CA5B7009EB9F3 /* DummyCancellableOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyCancellableOperation.swift; sourceTree = "<group>"; };
 		00AB61AB274A33940046B7D3 /* GCDService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCDService.swift; sourceTree = "<group>"; };
 		00AB61AE274A33BC0046B7D3 /* ServiceRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceRequest.swift; sourceTree = "<group>"; };
 		00AB61B7274A3B5E0046B7D3 /* QueueItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueItemViewModel.swift; sourceTree = "<group>"; };
@@ -113,12 +119,30 @@
 			path = macOS;
 			sourceTree = "<group>";
 		};
+		00A42A74274CA582009EB9F3 /* OperationQueues */ = {
+			isa = PBXGroup;
+			children = (
+				00A42A71274CA1C3009EB9F3 /* OperationQueueService.swift */,
+				00A42A75274CA5B7009EB9F3 /* DummyCancellableOperation.swift */,
+			);
+			path = OperationQueues;
+			sourceTree = "<group>";
+		};
+		00A42A78274CA779009EB9F3 /* GCD */ = {
+			isa = PBXGroup;
+			children = (
+				00AB61AB274A33940046B7D3 /* GCDService.swift */,
+			);
+			path = GCD;
+			sourceTree = "<group>";
+		};
 		00AB61AA274A337A0046B7D3 /* Services */ = {
 			isa = PBXGroup;
 			children = (
 				00AB61BD274A3F8C0046B7D3 /* Service.swift */,
 				00AB61AE274A33BC0046B7D3 /* ServiceRequest.swift */,
-				00AB61AB274A33940046B7D3 /* GCDService.swift */,
+				00A42A78274CA779009EB9F3 /* GCD */,
+				00A42A74274CA582009EB9F3 /* OperationQueues */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -277,6 +301,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				00A2011E2749986A0004DF82 /* QueueContainerView.swift in Sources */,
+				00A42A72274CA1C4009EB9F3 /* OperationQueueService.swift in Sources */,
 				008BC48827461264002D4439 /* QueuesContainerPresenter.swift in Sources */,
 				00AB61BB274A3E850046B7D3 /* QueueViewModel.swift in Sources */,
 				007E92F02744BFFD008041E3 /* LoadBalancer.swift in Sources */,
@@ -287,6 +312,7 @@
 				00AB61B8274A3B5E0046B7D3 /* QueueItemViewModel.swift in Sources */,
 				00AB61AF274A33BC0046B7D3 /* ServiceRequest.swift in Sources */,
 				007E92DE2744BBC3008041E3 /* ConcurrentClientServerApp.swift in Sources */,
+				00A42A76274CA5B7009EB9F3 /* DummyCancellableOperation.swift in Sources */,
 				00AB61AC274A33940046B7D3 /* GCDService.swift in Sources */,
 				007E92ED2744BFB0008041E3 /* CurrentMinLoadBalancer.swift in Sources */,
 			);
@@ -297,6 +323,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				00A2011F2749986A0004DF82 /* QueueContainerView.swift in Sources */,
+				00A42A73274CA1C4009EB9F3 /* OperationQueueService.swift in Sources */,
 				008BC48927461264002D4439 /* QueuesContainerPresenter.swift in Sources */,
 				00AB61BC274A3E850046B7D3 /* QueueViewModel.swift in Sources */,
 				007E92F12744BFFD008041E3 /* LoadBalancer.swift in Sources */,
@@ -307,6 +334,7 @@
 				00AB61B9274A3B5E0046B7D3 /* QueueItemViewModel.swift in Sources */,
 				00AB61B0274A33BC0046B7D3 /* ServiceRequest.swift in Sources */,
 				007E92DF2744BBC3008041E3 /* ConcurrentClientServerApp.swift in Sources */,
+				00A42A77274CA5B7009EB9F3 /* DummyCancellableOperation.swift in Sources */,
 				00AB61AD274A33940046B7D3 /* GCDService.swift in Sources */,
 				007E92EE2744BFB0008041E3 /* CurrentMinLoadBalancer.swift in Sources */,
 			);
