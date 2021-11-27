@@ -161,6 +161,7 @@
 			children = (
 				00A42A98274DF797009EB9F3 /* SwiftCService.swift */,
 				0093F93D274FFD3D00BCA042 /* SerialExecutor.swift */,
+				0093F9402750009400BCA042 /* AsyncSerialQueue.swift */,
 			);
 			path = "Swift Concurrency";
 			sourceTree = "<group>";
@@ -224,7 +225,6 @@
 				007E92EF2744BFFD008041E3 /* LoadBalancer.swift */,
 				007E92EC2744BFB0008041E3 /* CurrentMinLoadBalancer.swift */,
 				00C0FEAD274F648400F3D5AC /* AsyncCurrentMinLoadBalancerProxy.swift */,
-				0093F9402750009400BCA042 /* AsyncSerialQueue.swift */,
 			);
 			path = "Load Balancer";
 			sourceTree = "<group>";
