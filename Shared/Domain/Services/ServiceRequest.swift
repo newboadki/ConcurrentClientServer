@@ -14,4 +14,11 @@ struct ServiceRequest {
     }
     
     let type: RequestType
+    let id: String
+    
+    init(type: RequestType, id: String = "") {
+        self.type = type
+        self.id = id
+        
+    }
 }

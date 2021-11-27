@@ -36,7 +36,8 @@ class QueuePresenter: ObservableObject {
     }
     
     private func subscribeForLoadUpdates() {
-        serviceLoadSubscription = serviceLoadPublisher.receive(on: DispatchQueue.main)
+        serviceLoadSubscription = serviceLoadPublisher
+            .receive(on: DispatchQueue.main)
             .sink(receiveValue: { newLoadInfo in
                 guard newLoadInfo.currentItemsCount >= 0 else {
                     return

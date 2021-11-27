@@ -11,8 +11,8 @@ class OperationQueueService: Service {
     
     // MARK: Service properties
     
-    var id: String
-    var supportedRequestTypes: [ServiceRequest.RequestType]
+    let id: String
+    let supportedRequestTypes: [ServiceRequest.RequestType]
     var loadInfoPublisher: Published<ServiceLoadInfo>.Publisher {
         $loadInfo
     }
@@ -66,9 +66,6 @@ class OperationQueueService: Service {
         
     func observeOperationCount() {
         kvoToken = operationQueue.observe(\.operationCount, options: .new) { (queue, change) in
-            guard let count = change.newValue else { return }
-            print("WORKLOAD \(count)")
-            
             // We should synchronise access to this property.
             // Currently the queue is serial, really minimizing the changes of race conditions over this var.
             // However, in concurrent queues, I assume access to operationCount is already thread-safe,

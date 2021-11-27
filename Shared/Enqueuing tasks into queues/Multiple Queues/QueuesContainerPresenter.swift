@@ -2,63 +2,53 @@
 //  QueuesContainerPresenter.swift
 //  ConcurrentClientServer
 //
-//  Created by Borja Arias Drake on 18.11.2021..
+//  Created by Borja Arias Drake on 27.11.2021..
 //
 
 import Foundation
 import Combine
-import SwiftUI
 
 
-class QueuesContainerPresenter: ObservableObject {
-        
-    @Published var queueViewModels: [QueueViewModel]
-    private let balancer: LoadBalancer
+@MainActor
+/// This class wraps concrete implementations of presenters conforming to QueuesContainerPresenterProtocol.
+/// It is required because we want the presenters to be ObservableObject. However, making a protocol inherit from ObservableObject required
+/// solving a lot of Swift generic quirks. Instead I wrap the presenters into this class and make it conform to ObservableObject.
+class QueuesContainerPresenter: QueuesContainerPresenterProtocol, ObservableObject {
     
-    init(balancer: LoadBalancer) {
-        self.balancer = balancer
+    @Published var queueViewModels: [QueueViewModel]
+    
+    var queueViewModelsPublisher: Published<[QueueViewModel]>.Publisher {
+        return basePresenter.queueViewModelsPublisher
+    }
+    
+    private var basePresenter: QueuesContainerPresenterProtocol
+    private var subscription: AnyCancellable?
+        
+    init(basePresenter: QueuesContainerPresenterProtocol) {
+        self.basePresenter = basePresenter
         self.queueViewModels = []
-        self.queueViewModels = self.balancer.serviceList.map { aService in
-            var color: Color = .yellow
-            if let type = aService.supportedRequestTypes.first {
-                switch type {
-                case .A:
-                    color = Color.CyberRetro.pink()
-                case .B:
-                    color = Color.CyberRetro.blue()
-                case .C:
-                    color = Color.CyberRetro.green()
-                }
-            }
-            return QueueViewModel(presenter: QueuePresenter(serviceId: aService.id, serviceLoadPublisher: AnyPublisher(aService.loadInfoPublisher)), baseColor: color)
-        }
+        self.subscribe()
     }
     
     func startA() {
-        DispatchQueue.global(qos: .default).async {
-            for _ in 1...5 {
-                self.balancer.handle(request: ServiceRequest(type: .A))
-            }
-        }
+        basePresenter.startA()
     }
     
     func startB() {
-        DispatchQueue.global(qos: .default).async {
-            for _ in 1...5 {
-                self.balancer.handle(request: ServiceRequest(type: .B))
-            }
-        }
+        basePresenter.startB()
     }
     
     func startC() {
-        DispatchQueue.global(qos: .default).async {
-            for _ in 1...5 {
-                self.balancer.handle(request: ServiceRequest(type: .C))
-            }
-        }
+        basePresenter.startC()
     }
     
     func cancel() {
-        balancer.cancel()
+        basePresenter.cancel()
+    }
+    
+    func subscribe() {
+        subscription = queueViewModelsPublisher
+            .receive(on: RunLoop.main)
+            .assign(to: \.queueViewModels, on: self)
     }
 }

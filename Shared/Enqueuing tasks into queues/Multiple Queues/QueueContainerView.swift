@@ -9,7 +9,7 @@ import SwiftUI
 
 struct QueueContainerView: View {
     
-    let presenter: QueuesContainerPresenter
+    @ObservedObject var presenter: QueuesContainerPresenter
     
     var body: some View {
         VStack {
@@ -86,6 +86,6 @@ private extension QueueContainerView {
 
 struct QueueContainerView_Previews: PreviewProvider {
     static var previews: some View {
-        QueueContainerView(presenter: QueuesContainerPresenter(balancer: CurrentMinLoadBalancer(services: baseGCDServiceConfiguration())))
+        QueueContainerView(presenter: QueuesContainerPresenter(basePresenter: SyncQueuesContainerPresenter(balancer: CurrentMinLoadBalancer(services: baseGCDServiceConfiguration()))))
     }
 }
