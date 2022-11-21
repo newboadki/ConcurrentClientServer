@@ -68,7 +68,7 @@ struct QueueView: View {
     }
 }
 
-/// In order to animate views in an out of the queue we need three sets of views:
+/// In order to animate views in and out of the queue we need three sets of views:
 /// - Dequeued Items
 /// - Enqueued items (the queue itself)
 /// - Items that have never been enqueued

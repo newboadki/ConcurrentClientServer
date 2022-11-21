@@ -55,6 +55,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		007AD6B2284919AB00DFD1B4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		007E92CE2744BBC1008041E3 /* ConcurrentClientServerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcurrentClientServerApp.swift; sourceTree = "<group>"; };
 		007E92D02744BBC3008041E3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		007E92D52744BBC3008041E3 /* ConcurrentClientServer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ConcurrentClientServer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -104,6 +105,7 @@
 		007E92C82744BBC0008041E3 = {
 			isa = PBXGroup;
 			children = (
+				007AD6B2284919AB00DFD1B4 /* README.md */,
 				007E92CD2744BBC1008041E3 /* Shared */,
 				007E92DC2744BBC3008041E3 /* macOS */,
 				007E92D62744BBC3008041E3 /* Products */,

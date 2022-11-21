@@ -48,16 +48,12 @@ class SwiftCService: QueueDelegate {
     
     func process(request: ServiceRequest) {
         // We want to enqueue and forget, so that we can continue to handle more requests.
-        // => Create an unstructure task, so we don't wait for its completion.
+        // => Create an unstructured task, so we don't wait for its completion.
         // => It has to be detached, because we are in @LoadBalancerActor, so that the new tasks don't inherit the actor and the enqueing can happen async
         Task.detached(priority:self.priority) {
             await self.serialQueue.process {
-                await Task.sleep(UInt64(self.delay) * 1_000_000_000)
-                (1...500).forEach { _ in
-                    if Task.isCancelled { return }
-                    // Do work
-                }
-                await Task.sleep(UInt64(self.delay) * 1_000_000_000)
+                let data = try? await URLSession.shared.data(from: URL(string: "https://google.com")!, delegate: nil)
+                // print(String(data: data!.0, encoding: .utf8))
             }
         }
     }

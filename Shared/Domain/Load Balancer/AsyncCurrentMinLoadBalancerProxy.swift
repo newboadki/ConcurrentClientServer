@@ -51,8 +51,7 @@ class AsyncCurrentMinLoadBalancerProxy {
     
     
     // MARK: Public API
-    
-    
+        
     /// This method runs completely synchronously
     func process(request: ServiceRequest) {
         do {

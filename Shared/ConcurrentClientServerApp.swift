@@ -15,7 +15,7 @@ struct ConcurrentClientServerApp: App {
             //QueueContainerView(presenter: QueuesContainerPresenter(basePresenter: SyncQueuesContainerPresenter(balancer: CurrentMinLoadBalancer(services: baseGCDServiceConfiguration()))))
             
             // Operation Queues
-            // QueueContainerView(presenter: QueuesContainerPresenter(basePresenter: SyncQueuesContainerPresenter(balancer: CurrentMinLoadBalancer(services: baseOperationQueueServiceConfiguration()))))
+            //QueueContainerView(presenter: QueuesContainerPresenter(basePresenter: SyncQueuesContainerPresenter(balancer: CurrentMinLoadBalancer(services: baseOperationQueueServiceConfiguration()))))
             
             // Swift Concurrency
             QueueContainerView(presenter: QueuesContainerPresenter(basePresenter: AsyncQueuesContainerPresenter(balancer: AsyncCurrentMinLoadBalancerProxy(services: baseSwiftConcurrencyServiceConfiguration()))))
