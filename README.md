@@ -22,3 +22,6 @@ In order to animate views in and out of the queue we need three sets of views:
 
 The presenter class listens to updates from a load publisher. When a service's load changes, the presenter computes the new states of the items, which can be _dequeued_, _enqueued_, or _none_. These helps SwiftUI move and animate the views appropriately. 
 
+
+<img src="https://user-images.githubusercontent.com/199423/212557431-7d8029b9-6838-4bb8-b3a7-8f8d74b60c36.gif" alt="Adding tasks to different queues." width="50%">
+
