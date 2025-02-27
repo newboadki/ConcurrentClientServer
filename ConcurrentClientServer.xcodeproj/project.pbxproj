@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		004D38E22D70E9CF00D7EC67 /* SwiftCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A42A98274DF797009EB9F3 /* SwiftCService.swift */; };
 		007E92DE2744BBC3008041E3 /* ConcurrentClientServerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007E92CE2744BBC1008041E3 /* ConcurrentClientServerApp.swift */; };
 		007E92DF2744BBC3008041E3 /* ConcurrentClientServerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007E92CE2744BBC1008041E3 /* ConcurrentClientServerApp.swift */; };
 		007E92E22744BBC3008041E3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 007E92D02744BBC3008041E3 /* Assets.xcassets */; };
@@ -300,7 +301,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1310;
-				LastUpgradeCheck = 1310;
+				LastUpgradeCheck = 1610;
 				TargetAttributes = {
 					007E92D42744BBC3008041E3 = {
 						CreatedOnToolsVersion = 13.1;
@@ -391,6 +392,7 @@
 				00AD4C182748C52A009C517B /* QueueView.swift in Sources */,
 				00AB61BF274A3F8C0046B7D3 /* Service.swift in Sources */,
 				00AB61C3274A4ADC0046B7D3 /* Color+CyberPunkRetroPalette.swift in Sources */,
+				004D38E22D70E9CF00D7EC67 /* SwiftCService.swift in Sources */,
 				00A2011C274991DC0004DF82 /* QueuePresenter.swift in Sources */,
 				00E6380E2751F5ED0033C5B9 /* QueuesContainerPresenter.swift in Sources */,
 				00AB61B9274A3B5E0046B7D3 /* QueueItemViewModel.swift in Sources */,
@@ -443,9 +445,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -502,9 +506,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -527,7 +533,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 29ND5D76MZ;
+				DEVELOPMENT_TEAM = 2ZZSD2G8T4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -558,7 +564,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 29ND5D76MZ;
+				DEVELOPMENT_TEAM = 2ZZSD2G8T4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -589,10 +595,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 29ND5D76MZ;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 2ZZSD2G8T4;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -601,7 +609,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sample.com.ConcurrentClientServer;
 				PRODUCT_NAME = ConcurrentClientServer;
@@ -617,10 +625,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 29ND5D76MZ;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 2ZZSD2G8T4;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -629,7 +639,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sample.com.ConcurrentClientServer;
 				PRODUCT_NAME = ConcurrentClientServer;

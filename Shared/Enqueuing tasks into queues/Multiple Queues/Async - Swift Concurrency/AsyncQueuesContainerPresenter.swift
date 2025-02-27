@@ -70,7 +70,7 @@ class AsyncQueuesContainerPresenter: ObservableObject, QueuesContainerPresenterP
 				 If the requests are fired rapidly, as in with no delay in the for-loop, then there's no time for the serial queue to update its count,
 				 therefore the balancer works with the latest known value, resulting in multiple requests going to the same service even if there are others free.
 				 */
-				//try? await Task.sleep(nanoseconds: 1_000_000_000)
+				try? await Task.sleep(nanoseconds: 1_000_000_000)
 			}
 		}
 	}

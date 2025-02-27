@@ -12,15 +12,15 @@ extension Color {
     struct CyberRetro {
         
         static func pink() -> Color {
-            Color(UIColor(named: "CyberPink")!)
+			Color.pink
         }
         
         static func green() -> Color {
-            Color(UIColor(named: "CyberGreen")!)
+			Color.green
         }
 
         static func blue() -> Color {
-            Color(UIColor(named: "CyberBlue")!)
+			Color.blue
         }
     }
 }
