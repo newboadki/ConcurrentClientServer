@@ -12,14 +12,14 @@ enum SerialExecutorState {
     case running(Task<Void, Never>)
 }
 
-typealias AsyncProcedure = () async -> Void
-
-protocol QueueDelegate {
+protocol QueueDelegate: Sendable {
     func taskCountChanged(_ newValue: Int) async
 }
 
-protocol SerialExecutor {
-    
+protocol SerialExecutor: Sendable {
+
+	func setDelay(_ delay: Int64) async
+	
     func setTaskComletionDelegate(_ delegate: QueueDelegate) async
     
     func state() async -> SerialExecutorState
@@ -27,7 +27,7 @@ protocol SerialExecutor {
     /// Number of tasks in the queue
     func count() async -> Int
     
-    func process(_ block: @escaping AsyncProcedure) async
+    func process(_ block: AsyncProcedure) async
     
     func cancel() async
 }

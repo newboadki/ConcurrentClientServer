@@ -55,9 +55,11 @@ class AsyncCurrentMinLoadBalancerProxy {
     /// This method runs completely synchronously
     func process(request: ServiceRequest) {
         do {
-            /// The service runs in the @LoadBalancerActor global actor. This is so that any load balaning decisions are made synchronously.
+            /// The service runs in the @LoadBalancerActor global actor.
+			/// This is so that any load balaning decisions are made synchronously.
             /// In particular, this means accessing the service's task load synchronously.
             let service = try self.service(for: request)
+			print("SERVICE: \(service.id)")
             service.process(request: request)
         } catch {
             print(error)
@@ -81,21 +83,14 @@ class AsyncCurrentMinLoadBalancerProxy {
         guard supportingServices.count > 0 else {
             throw RequestError.serviceUnavailable
         }
+
+        let service: SwiftCService? = supportingServices.min(by: {
+			$0.workLoad() <= $1.workLoad()
+		})
         
-        var minWorkLoad: Int = Int.max
-        var service: SwiftCService?
-        for s in supportingServices {
-            let currentWorkLoad = s.workLoad()
-            if currentWorkLoad < minWorkLoad {
-                minWorkLoad = currentWorkLoad
-                service = s
-            }
-        }
-        
-        guard let finalService = service else {
+        guard let service else {
             throw RequestError.serviceUnavailable
         }
-        
-        return finalService
+        return service
     }
 }

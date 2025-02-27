@@ -9,8 +9,9 @@ import Foundation
 import Combine
 import SwiftUI
 
+@MainActor
 class SyncQueuesContainerPresenter: QueuesContainerPresenterProtocol {
-        
+
     var queueViewModelsPublisher: Published<[QueueViewModel]>.Publisher {
         return $_queueViewModels
     }
@@ -22,22 +23,27 @@ class SyncQueuesContainerPresenter: QueuesContainerPresenterProtocol {
     init(balancer: LoadBalancer) {
         self.balancer = balancer
         self._queueViewModels = []
-        self._queueViewModels = self.balancer.serviceList.map { aService in
-            var color: Color = .yellow
-            if let type = aService.supportedRequestTypes.first {
-                switch type {
-                case .A:
-                    color = Color.CyberRetro.pink()
-                case .B:
-                    color = Color.CyberRetro.blue()
-                case .C:
-                    color = Color.CyberRetro.green()
-                }
-            }
-            return QueueViewModel(presenter: QueuePresenter(serviceId: aService.id, serviceLoadPublisher: AnyPublisher(aService.loadInfoPublisher)), baseColor: color)
-        }
     }
-    
+
+	func setup() async {
+		for aService in self.balancer.serviceList {
+			var color: Color = .yellow
+			if let type = aService.supportedRequestTypes.first {
+				switch type {
+				case .A:
+					color = Color.CyberRetro.pink()
+				case .B:
+					color = Color.CyberRetro.blue()
+				case .C:
+					color = Color.CyberRetro.green()
+				}
+			}
+			let model = await QueueViewModel(presenter: QueuePresenter(serviceId: aService.id, serviceLoadPublisher: aService.loadInfoSequence), baseColor: color)
+
+			self._queueViewModels.append(model)
+		}
+	}
+
     func startA() {
         DispatchQueue.global(qos: .default).async {
             for _ in 1...5 {

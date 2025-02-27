@@ -18,12 +18,11 @@ class SwiftCService: QueueDelegate {
     
     /// Services that have the same priority won't run concurrently
     let priority: TaskPriority
-    
-    @Published
+
     /// A way for the service to communicate that its load changed
-    var loadInfoPublisher: ServiceLoadInfo = ServiceLoadInfo(serviceId: "NULL", currentItemsCount: 0)
-    
-    
+    var loadInfoSequence: AsyncStream<ServiceLoadInfo>!
+
+
     // MARK: Private properties
     
     /// A multiple of this amount is used in the body of a task representing an incoming request.
@@ -31,8 +30,14 @@ class SwiftCService: QueueDelegate {
     
     /// Tasks are executed in FIFO order
     private let serialQueue: AsyncSerialQueue
-    
-    
+
+	/// Continuation to emit values via loadInfoSequence
+	private var loadInfoContinuation: AsyncStream<ServiceLoadInfo>.Continuation?
+	
+	/// Last value emitted by loadInfoSequence
+	private var lastLoadInfo: ServiceLoadInfo?
+
+
     // MARK: Private Initializers
     
     nonisolated init(id: String, priority: TaskPriority, supportedRequestTypes: [ServiceRequest.RequestType], delay: UInt32) {
@@ -41,7 +46,19 @@ class SwiftCService: QueueDelegate {
         self.supportedRequestTypes = supportedRequestTypes
         self.delay = delay
         self.serialQueue = AsyncSerialQueue(id: self.id)
-        Task {await self.serialQueue.setTaskComletionDelegate(self)}
+
+		Task { @LoadBalancerActor in
+			await self.serialQueue.setDelay(Int64(self.delay))
+
+			self.loadInfoSequence = AsyncStream { [weak self] cont in
+				let info = ServiceLoadInfo(serviceId: "NULL", currentItemsCount: 0)
+				self?.loadInfoContinuation = cont
+				self?.lastLoadInfo = info
+				self?.loadInfoContinuation?.yield(self?.lastLoadInfo ?? info)
+			}
+
+			await self.serialQueue.setTaskComletionDelegate(self)
+		}
     }
     
     // MARK: Public API
@@ -49,17 +66,17 @@ class SwiftCService: QueueDelegate {
     func process(request: ServiceRequest) {
         // We want to enqueue and forget, so that we can continue to handle more requests.
         // => Create an unstructured task, so we don't wait for its completion.
-        // => It has to be detached, because we are in @LoadBalancerActor, so that the new tasks don't inherit the actor and the enqueing can happen async
-        Task.detached(priority:self.priority) {
-            await self.serialQueue.process {
-                let data = try? await URLSession.shared.data(from: URL(string: "https://google.com")!, delegate: nil)
-                // print(String(data: data!.0, encoding: .utf8))
-            }
-        }
-    }
-    
-    func workLoad() -> Int {
-        return loadInfoPublisher.currentItemsCount
+		// => It has to be detached, because we are in @LoadBalancerActor, so that the new tasks don't inherit the actor and the enqueing can happen async
+		Task.detached(priority:self.priority) {
+			await self.serialQueue.process(AsyncProcedure(block: {
+				let _ = try? await URLSession.shared.data(from: URL(string: "https://google.com")!,
+														  delegate: nil)
+			}))			
+		}
+	}
+	
+	func workLoad() -> Int {
+		lastLoadInfo?.currentItemsCount ?? 0
     }
     
     func cancel() {
@@ -71,12 +88,13 @@ class SwiftCService: QueueDelegate {
     // MARK: QueueDelegate
     
     func taskCountChanged(_ newValue: Int) async {
-        self.loadInfoPublisher = ServiceLoadInfo(serviceId: self.id, currentItemsCount: newValue)
+		lastLoadInfo = ServiceLoadInfo(serviceId: self.id, currentItemsCount: newValue)
+		loadInfoContinuation?.yield(lastLoadInfo!)
     }
     
     // MARK: - Private helpers
     
     private func increasedByOneLoadInfo() -> ServiceLoadInfo {
-        return ServiceLoadInfo(serviceId: id, currentItemsCount: loadInfoPublisher.currentItemsCount + 1)
+		return ServiceLoadInfo(serviceId: id, currentItemsCount: workLoad() + 1)
     }
 }

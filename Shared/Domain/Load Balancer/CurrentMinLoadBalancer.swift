@@ -7,8 +7,8 @@
 
 import Foundation
 
-class CurrentMinLoadBalancer: LoadBalancer {
-    
+class CurrentMinLoadBalancer: @unchecked Sendable, LoadBalancer {
+
     // MARK: Public properties & types
     
     enum RequestError: Error {

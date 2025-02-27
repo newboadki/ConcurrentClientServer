@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol LoadBalancer {    
+protocol LoadBalancer: Sendable {    
     var serviceList: [Service] { get }
     func handle(request: ServiceRequest)
     func cancel()

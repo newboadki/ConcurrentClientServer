@@ -7,16 +7,14 @@
 
 import Foundation
 
-class OperationQueueService: Service {
-    
+class OperationQueueService: @unchecked Sendable, Service {
+
     // MARK: Service properties
     
     let id: String
     let supportedRequestTypes: [ServiceRequest.RequestType]
-    var loadInfoPublisher: Published<ServiceLoadInfo>.Publisher {
-        $loadInfo
-    }
-    
+	var loadInfoSequence: AsyncStream<ServiceLoadInfo>
+	
     // MARK: Private properties
     
     @Published private var loadInfo: ServiceLoadInfo
@@ -24,7 +22,9 @@ class OperationQueueService: Service {
     private let operationQueue: OperationQueue
     private let workLoadOperationQueue: OperationQueue
     private var kvoToken: NSKeyValueObservation?
-        
+	/// Continuation to emit values via loadInfoSequence
+	private var loadInfoContinuation: AsyncStream<ServiceLoadInfo>.Continuation?
+
     // MARK: Initializers
     
     init(id: String, supportedRequestTypes: [ServiceRequest.RequestType], delay: UInt32) {
@@ -36,6 +36,11 @@ class OperationQueueService: Service {
         self.workLoadOperationQueue = OperationQueue()
         self.workLoadOperationQueue.maxConcurrentOperationCount = 1
         self.loadInfo = ServiceLoadInfo(serviceId: id, currentItemsCount: 0)
+		self.loadInfoSequence = AsyncStream { _ in }
+		self.loadInfoSequence = AsyncStream { [weak self] cont in
+			self?.loadInfoContinuation = cont
+			self?.loadInfoContinuation?.yield(self!.loadInfo)
+		}
         self.observeOperationCount()
     }
     
@@ -72,6 +77,7 @@ class OperationQueueService: Service {
             // But KVO schedule updates this thread that sends the KVO notification.
             self.workLoadOperationQueue.addOperation {
                 self.loadInfo = ServiceLoadInfo(serviceId: self.id, currentItemsCount: self.workLoad())
+				self.loadInfoContinuation?.yield(self.loadInfo)
             }
         }
     }

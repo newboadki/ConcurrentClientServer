@@ -12,7 +12,9 @@ import Combine
 protocol QueuesContainerPresenterProtocol {
     
     var queueViewModelsPublisher: Published<[QueueViewModel]>.Publisher { get }
-    
+
+	func setup() async
+
     func startA()
     func startB()
     func startC()

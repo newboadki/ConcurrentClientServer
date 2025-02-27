@@ -7,12 +7,14 @@
 
 import Foundation
 
+struct AsyncProcedure: Sendable {
+	let block: @Sendable () async -> Void
+}
+
 /// Executes asynchronous tasks serially.
 /// Requests will be enqueued as they arrive, but they'll execute in FIFO order once the previous task has finished.
 /// Tasks are executed in a unstructured but scoped task.
 actor AsyncSerialQueue: SerialExecutor {
-    
-    typealias AsyncProcedure = () async -> Void
 
     // MARK: Private properties
     
@@ -20,7 +22,8 @@ actor AsyncSerialQueue: SerialExecutor {
     private var requests: [AsyncProcedure]
     private var delegate: QueueDelegate?
     private var id: String
-    
+	private var delay: Int64 = 0
+
     // MARK: Initializers
     
     init(id: String) {
@@ -42,8 +45,12 @@ actor AsyncSerialQueue: SerialExecutor {
     func setTaskComletionDelegate(_ delegate: QueueDelegate) async {
         self.delegate = delegate
     }
-        
-    func process(_ block: @escaping AsyncProcedure) async {        
+
+	func setDelay(_ delay: Int64) {
+		self.delay = delay
+	}
+
+    func process(_ block: AsyncProcedure) async {
         self.requests.append(block)
         await self.delegate?.taskCountChanged(requests.count)
         
@@ -70,11 +77,11 @@ actor AsyncSerialQueue: SerialExecutor {
     // MARK: Helpers
     
     private func executeNextRequest() async {
-        guard let block = self.requests.first else {
+        guard let request = self.requests.first else {
             return
         }
         
-        let task = Task { await block() }
+		let task = Task { await request.block() }
         state = .running(task)
         _ = await task.result
         state = .idle
@@ -82,6 +89,8 @@ actor AsyncSerialQueue: SerialExecutor {
         if !requests.isEmpty {
             requests.remove(at: 0)
         }
+
+		try? await Task.sleep(nanoseconds: 1_000_000_000 * UInt64(self.delay))
         await self.delegate?.taskCountChanged(requests.count)
     }
 }

@@ -7,17 +7,15 @@
 
 import Foundation
 
-class GCDService: Service {
-    
+final class GCDService: @unchecked Sendable, Service {
+
     // MARK: Public properties
     
     let id: String
     let supportedRequestTypes: [ServiceRequest.RequestType]
     
-    var loadInfoPublisher: Published<ServiceLoadInfo>.Publisher {
-        $loadInfo
-    }
-    
+	var loadInfoSequence: AsyncStream<ServiceLoadInfo>
+
     // MARK: Private properties
     
     @Published private var loadInfo: ServiceLoadInfo
@@ -34,7 +32,13 @@ class GCDService: Service {
     
     // To allow cancellation of tasks.
     private var workItems: [DispatchWorkItem]
-    
+
+	/// Continuation to emit values via loadInfoSequence
+	private var loadInfoContinuation: AsyncStream<ServiceLoadInfo>.Continuation?
+
+	/// Last value emitted by loadInfoSequence
+	private var lastLoadInfo: ServiceLoadInfo?
+
     // MARK: Initializers
     
     init(id: String, supportedRequestTypes: [ServiceRequest.RequestType], delay: UInt32) {
@@ -45,6 +49,12 @@ class GCDService: Service {
         self.delay = delay
         self.loadInfo = ServiceLoadInfo(serviceId: id, currentItemsCount: 0)
         self.workItems = []
+
+		self.loadInfoSequence = AsyncStream { _ in }
+		self.loadInfoSequence = AsyncStream { [weak self] cont in
+			self?.loadInfoContinuation = cont
+			self?.loadInfoContinuation?.yield(self!.loadInfo)
+		}
     }
     
     // MARK: Public API
@@ -72,8 +82,7 @@ class GCDService: Service {
             sleep(self.delay)
         }
     }
-    
-    
+
     /// Supports cancellation
     private func processDispatchWorkItem(request: ServiceRequest) {
         var workItem: DispatchWorkItem?
@@ -101,7 +110,7 @@ class GCDService: Service {
     }
     
     /// Does not support cancellation
-    private func enqueue(_ block: @escaping () -> Void) {
+    private func enqueue(_ block: @Sendable @escaping () -> Void) {
         // NOTE: increment and decrement can witherbe async or sync to be dispatched sync because serial execution of inc/dec operations are guaranteed.
         
         // Alternative 1
@@ -117,7 +126,7 @@ class GCDService: Service {
         self.tasksSerialQueue.async {
             //print("SERVICE-\(self.id): about to process request. LOAD: \(self._workLoad)")
             block()
-            
+
             // Alternative 1
             self.decrementWorkLoad()
             //print("SERVICE-\(self.id): finished processing request. LOAD: \(self._workLoad)")
@@ -136,6 +145,7 @@ class GCDService: Service {
         workLoadSerialQueue.async {
             self._workLoad += 1
             self.loadInfo = ServiceLoadInfo(serviceId: self.id, currentItemsCount: self._workLoad)
+			self.loadInfoContinuation?.yield(self.loadInfo)
             print("SERVICE-\(self.id): LOAD: \(self._workLoad)")
         }
     }
@@ -144,14 +154,19 @@ class GCDService: Service {
         workLoadSerialQueue.async {
             self._workLoad = max (self._workLoad - 1, 0)
             self.loadInfo = ServiceLoadInfo(serviceId: self.id, currentItemsCount: self._workLoad)
+			self.loadInfoContinuation?.yield(self.loadInfo)
             print("SERVICE-\(self.id): LOAD: \(self._workLoad)")
         }
     }
     
     private func resetWorkLoad() {
-        workLoadSerialQueue.async {
-            self._workLoad = 0
-            self.loadInfo = ServiceLoadInfo(serviceId: self.id, currentItemsCount: self._workLoad)
+		workLoadSerialQueue.async { [weak self]  in
+            self?._workLoad = 0
+			let id = self?.id ?? ""
+			let workload = self?._workLoad ?? 0
+			let newValue = ServiceLoadInfo(serviceId: id, currentItemsCount: workload)
+			self?.loadInfo = newValue
+			self?.loadInfoContinuation?.yield(newValue)
         }
     }
 }

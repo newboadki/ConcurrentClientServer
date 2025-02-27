@@ -10,7 +10,7 @@ import Foundation
 protocol Service {
     var id: String { get }
     var supportedRequestTypes: [ServiceRequest.RequestType] { get }
-    var loadInfoPublisher: Published<ServiceLoadInfo>.Publisher { get }
+	var loadInfoSequence: AsyncStream<ServiceLoadInfo> { get }
     func process(request: ServiceRequest)
     func workLoad() -> Int
     func cancel()

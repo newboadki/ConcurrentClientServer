@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct QueueContainerView: View {
-    
+	
     @ObservedObject var presenter: QueuesContainerPresenter
     
     var body: some View {
@@ -27,6 +27,9 @@ struct QueueContainerView: View {
                 buttonToCancel()
             }
         }
+		.task {
+			await presenter.setup()
+		}
     }
 }
 
@@ -84,8 +87,8 @@ private extension QueueContainerView {
     }
 }
 
-struct QueueContainerView_Previews: PreviewProvider {
-    static var previews: some View {
-        QueueContainerView(presenter: QueuesContainerPresenter(basePresenter: SyncQueuesContainerPresenter(balancer: CurrentMinLoadBalancer(services: baseGCDServiceConfiguration()))))
-    }
-}
+//struct QueueContainerView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        QueueContainerView(presenter: QueuesContainerPresenter(basePresenter: SyncQueuesContainerPresenter(balancer: CurrentMinLoadBalancer(services: baseGCDServiceConfiguration()))))
+//    }
+//}

@@ -7,7 +7,7 @@
 
 import Foundation
 
-class DummyCancellableOperation: Operation {
+class DummyCancellableOperation: Operation, @unchecked Sendable {
 
     // MARK: Public properties
     override var isFinished: Bool {

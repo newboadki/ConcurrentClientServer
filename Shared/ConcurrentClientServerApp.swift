@@ -12,13 +12,13 @@ struct ConcurrentClientServerApp: App {
     var body: some Scene {
         WindowGroup {
             // GCD
-            //QueueContainerView(presenter: QueuesContainerPresenter(basePresenter: SyncQueuesContainerPresenter(balancer: CurrentMinLoadBalancer(services: baseGCDServiceConfiguration()))))
-            
+            // QueueContainerView(presenter: QueuesContainerPresenter(basePresenter: SyncQueuesContainerPresenter(balancer: CurrentMinLoadBalancer(services: baseGCDServiceConfiguration()))))
+
             // Operation Queues
             //QueueContainerView(presenter: QueuesContainerPresenter(basePresenter: SyncQueuesContainerPresenter(balancer: CurrentMinLoadBalancer(services: baseOperationQueueServiceConfiguration()))))
-            
+
             // Swift Concurrency
-            QueueContainerView(presenter: QueuesContainerPresenter(basePresenter: AsyncQueuesContainerPresenter(balancer: AsyncCurrentMinLoadBalancerProxy(services: baseSwiftConcurrencyServiceConfiguration()))))
+             QueueContainerView(presenter: QueuesContainerPresenter(basePresenter: AsyncQueuesContainerPresenter(balancer: AsyncCurrentMinLoadBalancerProxy(services: baseSwiftConcurrencyServiceConfiguration()))))
         }
     }
 }
@@ -37,10 +37,10 @@ func baseGCDServiceConfiguration() -> [ServiceRequest.RequestType : [GCDService]
 }
 
 func baseOperationQueueServiceConfiguration() -> [ServiceRequest.RequestType : [OperationQueueService]] {
-    let A1 = OperationQueueService(id: "A1", supportedRequestTypes: [.A], delay: 2)
-    let A2 = OperationQueueService(id: "A2", supportedRequestTypes: [.A], delay: 5)
+    let A1 = OperationQueueService(id: "A1", supportedRequestTypes: [.A], delay: 1)
+    let A2 = OperationQueueService(id: "A2", supportedRequestTypes: [.A], delay: 8)
     let B = OperationQueueService(id: "B", supportedRequestTypes: [.B], delay: 1)
-    let C1 = OperationQueueService(id: "C1", supportedRequestTypes: [.C], delay: 2)
+    let C1 = OperationQueueService(id: "C1", supportedRequestTypes: [.C], delay: 10)
     let C2 = OperationQueueService(id: "C2", supportedRequestTypes: [.C], delay: 1)
     let C3 = OperationQueueService(id: "C3", supportedRequestTypes: [.C], delay: 3)
     
@@ -50,9 +50,9 @@ func baseOperationQueueServiceConfiguration() -> [ServiceRequest.RequestType : [
 }
 
 func baseSwiftConcurrencyServiceConfiguration() -> [ServiceRequest.RequestType : [SwiftCService]] {
-    let A1 = SwiftCService(id: "A1", priority: .low, supportedRequestTypes: [.A], delay: 5)
+    let A1 = SwiftCService(id: "A1", priority: .low, supportedRequestTypes: [.A], delay: 1)
     let A2 = SwiftCService(id: "A2", priority: .medium, supportedRequestTypes: [.A], delay: 5)
-    let B = SwiftCService(id: "B", priority: .background, supportedRequestTypes: [.B], delay: 5)
+    let B = SwiftCService(id: "B", priority: .background, supportedRequestTypes: [.B], delay: 10)
     let C1 = SwiftCService(id: "C1", priority: .medium, supportedRequestTypes: [.C], delay: 4)
     let C2 = SwiftCService(id: "C2", priority: .low, supportedRequestTypes: [.C], delay: 1)
     let C3 = SwiftCService(id: "C3", priority: .high, supportedRequestTypes: [.C], delay: 6)
