@@ -50,13 +50,13 @@ func baseOperationQueueServiceConfiguration() -> [ServiceRequest.RequestType : [
 }
 
 func baseSwiftConcurrencyServiceConfiguration() -> [ServiceRequest.RequestType : [SwiftCService]] {
-    let A1 = SwiftCService(id: "A1", priority: .low, supportedRequestTypes: [.A], delay: 1)
+    let A1 = SwiftCService(id: "A1", priority: .low, supportedRequestTypes: [.A], delay: 2)
     let A2 = SwiftCService(id: "A2", priority: .medium, supportedRequestTypes: [.A], delay: 5)
-    let B = SwiftCService(id: "B", priority: .background, supportedRequestTypes: [.B], delay: 10)
-    let C1 = SwiftCService(id: "C1", priority: .medium, supportedRequestTypes: [.C], delay: 4)
-    let C2 = SwiftCService(id: "C2", priority: .low, supportedRequestTypes: [.C], delay: 1)
-    let C3 = SwiftCService(id: "C3", priority: .high, supportedRequestTypes: [.C], delay: 6)
-    
+    let B = SwiftCService(id: "B", priority: .background, supportedRequestTypes: [.B], delay: 5)
+    let C1 = SwiftCService(id: "C1", priority: .medium, supportedRequestTypes: [.C], delay: 1)
+    let C2 = SwiftCService(id: "C2", priority: .low, supportedRequestTypes: [.C], delay: 4)
+    let C3 = SwiftCService(id: "C3", priority: .high, supportedRequestTypes: [.C], delay: 10)
+
     return  [.A : [A1, A2],
              .B : [B],
              .C : [C1, C2, C3]]

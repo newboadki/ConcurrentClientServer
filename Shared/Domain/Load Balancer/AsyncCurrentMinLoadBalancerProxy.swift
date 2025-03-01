@@ -16,7 +16,6 @@ struct LoadBalancerActor {
   static let shared: SharedLoadBalancerActor = SharedLoadBalancerActor()
 }
 
-
 /// - Determining the current load must be a synchronous operation since two concurrent calls will not know about
 /// each other and might decide to overload the same service, when the best solution might have been to distribute the requests.
 ///
@@ -53,29 +52,27 @@ class AsyncCurrentMinLoadBalancerProxy {
     // MARK: Public API
         
     /// This method runs completely synchronously
-    func process(request: ServiceRequest) {
+    func process(request: ServiceRequest) async {
         do {
             /// The service runs in the @LoadBalancerActor global actor.
 			/// This is so that any load balaning decisions are made synchronously.
             /// In particular, this means accessing the service's task load synchronously.
-            let service = try self.service(for: request)
-			print("SERVICE: \(service.id)")
-            service.process(request: request)
+            let service = try await self.service(for: request)
+            await service.process(request: request)
         } catch {
             print(error)
         }
     }
 
-    func cancel() {
+    func cancel() async {
         for service in serviceList {
-            service.cancel()
+            await service.cancel()
         }
     }
     
     // MARK: Load balancing calculation
     
-    private func service(for request: ServiceRequest) throws ->  SwiftCService {
-                
+    private func service(for request: ServiceRequest) async throws ->  SwiftCService {
         guard let supportingServices = services[request.type] else {
             throw RequestError.unsupported
         }
@@ -84,10 +81,16 @@ class AsyncCurrentMinLoadBalancerProxy {
             throw RequestError.serviceUnavailable
         }
 
-        let service: SwiftCService? = supportingServices.min(by: {
-			$0.workLoad() <= $1.workLoad()
-		})
-        
+		var minWorkLoad: Int = Int.max
+		var service: SwiftCService?
+		for s in supportingServices {
+			let currentWorkLoad = await s.workLoad()
+			if currentWorkLoad < minWorkLoad {
+				minWorkLoad = currentWorkLoad
+				service = s
+			}
+		}
+
         guard let service else {
             throw RequestError.serviceUnavailable
         }

@@ -7,11 +7,9 @@
 
 import Foundation
 
-@LoadBalancerActor
-/// The service runs in the @LoadBalancerActor global actor. This is so that any load balaning decisions are made synchronously.
-/// In particular, this means accessing the service's task load synchronously.
-class SwiftCService: QueueDelegate {
-        
+
+actor SwiftCService {
+
     let id: String
     
     let supportedRequestTypes: [ServiceRequest.RequestType]
@@ -22,79 +20,91 @@ class SwiftCService: QueueDelegate {
     /// A way for the service to communicate that its load changed
     var loadInfoSequence: AsyncStream<ServiceLoadInfo>!
 
-
     // MARK: Private properties
     
     /// A multiple of this amount is used in the body of a task representing an incoming request.
     private let delay: UInt32
-    
-    /// Tasks are executed in FIFO order
-    private let serialQueue: AsyncSerialQueue
 
 	/// Continuation to emit values via loadInfoSequence
 	private var loadInfoContinuation: AsyncStream<ServiceLoadInfo>.Continuation?
-	
-	/// Last value emitted by loadInfoSequence
-	private var lastLoadInfo: ServiceLoadInfo?
 
+	private var state: SerialExecutorState
+
+	private var requests: [AsyncProcedure]
 
     // MARK: Private Initializers
     
-    nonisolated init(id: String, priority: TaskPriority, supportedRequestTypes: [ServiceRequest.RequestType], delay: UInt32) {
+	init(id: String, priority: TaskPriority, supportedRequestTypes: [ServiceRequest.RequestType], delay: UInt32) {
         self.id = id
         self.priority = priority
         self.supportedRequestTypes = supportedRequestTypes
         self.delay = delay
-        self.serialQueue = AsyncSerialQueue(id: self.id)
+		self.state = .idle
+		self.requests = []
 
-		Task { @LoadBalancerActor in
-			await self.serialQueue.setDelay(Int64(self.delay))
-
-			self.loadInfoSequence = AsyncStream { [weak self] cont in
-				let info = ServiceLoadInfo(serviceId: "NULL", currentItemsCount: 0)
-				self?.loadInfoContinuation = cont
-				self?.lastLoadInfo = info
-				self?.loadInfoContinuation?.yield(self?.lastLoadInfo ?? info)
-			}
-
-			await self.serialQueue.setTaskComletionDelegate(self)
-		}
+		Task { await self.setup() }
     }
-    
-    // MARK: Public API
-    
-    func process(request: ServiceRequest) {
-        // We want to enqueue and forget, so that we can continue to handle more requests.
-        // => Create an unstructured task, so we don't wait for its completion.
-		// => It has to be detached, because we are in @LoadBalancerActor, so that the new tasks don't inherit the actor and the enqueing can happen async
-		Task.detached(priority:self.priority) {
-			await self.serialQueue.process(AsyncProcedure(block: {
-				let _ = try? await URLSession.shared.data(from: URL(string: "https://google.com")!,
-														  delegate: nil)
-			}))			
+
+	func setContinuation(_ cont: AsyncStream<ServiceLoadInfo>.Continuation, info: ServiceLoadInfo) async {
+		loadInfoContinuation = cont
+		loadInfoContinuation?.yield(info)
+	}
+
+	func setup() async {
+		self.loadInfoSequence = AsyncStream { [weak self] cont in
+			Task {
+				let info = ServiceLoadInfo(serviceId: "NULL", currentItemsCount: 0)
+				await self?.setContinuation(cont, info: info)
+			}
 		}
 	}
-	
-	func workLoad() -> Int {
-		lastLoadInfo?.currentItemsCount ?? 0
-    }
-    
-    func cancel() {
-        Task {
-            await self.serialQueue.cancel()
-        }
-    }
 
-    // MARK: QueueDelegate
-    
-    func taskCountChanged(_ newValue: Int) async {
-		lastLoadInfo = ServiceLoadInfo(serviceId: self.id, currentItemsCount: newValue)
-		loadInfoContinuation?.yield(lastLoadInfo!)
+	// MARK: Public API
+
+	func process(request: ServiceRequest) async {
+		self.requests.append(AsyncProcedure(block: { [weak self] in
+			try? await Task.sleep(nanoseconds: 1_000_000_000 * UInt64(self?.delay ?? 0))
+		   }))
+
+		loadInfoContinuation?.yield(ServiceLoadInfo(serviceId: self.id, currentItemsCount: requests.count))
+
+		switch state {
+			case .idle: break
+			case .running: return
+		}
+
+		await executeNextRequest()
+	}
+
+	private func executeNextRequest() async {
+		guard let request = self.requests.first else {
+			return
+		}
+
+		let task = Task { await request.block() }
+		state = .running(task)
+		_ = await task.result
+		state = .idle
+
+		if !requests.isEmpty {
+			requests.remove(at: 0)
+			loadInfoContinuation?.yield(ServiceLoadInfo(serviceId: self.id, currentItemsCount: requests.count))
+			await executeNextRequest()
+		}
+	}
+
+	func workLoad() -> Int {
+		requests.count
     }
     
-    // MARK: - Private helpers
-    
-    private func increasedByOneLoadInfo() -> ServiceLoadInfo {
-		return ServiceLoadInfo(serviceId: id, currentItemsCount: workLoad() + 1)
-    }
+	func cancel() async {
+		switch state {
+			case .running(let task):
+				task.cancel()
+			default: break
+		}
+
+		self.requests.removeAll()
+		loadInfoContinuation?.yield(ServiceLoadInfo(serviceId: self.id, currentItemsCount: requests.count))
+	}
 }
